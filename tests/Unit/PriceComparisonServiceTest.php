@@ -10,11 +10,30 @@ use Illuminate\Support\Collection;
 use PHPUnit\Framework\TestCase;
 use Mockery;
 
+/**
+ * Unit tests for the PriceComparisonService class.
+ */
 class PriceComparisonServiceTest extends TestCase
 {
+    /**
+     * Mocked Supplier Repository instance.
+     *
+     * @var SupplierRepositoryInterface&Mockery\MockInterface
+     */
     private SupplierRepositoryInterface $mockRepository;
+
+    /**
+     * Service instance under test.
+     *
+     * @var PriceComparisonService
+     */
     private PriceComparisonService $priceComparisonService;
 
+    /**
+     * Set up the test dependencies.
+     *
+     * @return void
+     */
     protected function setUp(): void
     {
         parent::setUp();
@@ -22,13 +41,26 @@ class PriceComparisonServiceTest extends TestCase
         $this->priceComparisonService = new PriceComparisonService($this->mockRepository);
     }
 
+    /**
+     * Clean up after each test.
+     *
+     * @return void
+     */
     protected function tearDown(): void
     {
         Mockery::close();
         parent::tearDown();
     }
 
-    private function createMockProduct(string $name, int $units, float $price)
+    /**
+     * Create a mock product.
+     *
+     * @param string $name
+     * @param int $units
+     * @param float $price
+     * @return Product
+     */
+    private function createMockProduct(string $name, int $units, float $price): Product
     {
         $mockProduct = Mockery::mock(Product::class);
 
@@ -51,7 +83,14 @@ class PriceComparisonServiceTest extends TestCase
         return $mockProduct;
     }
 
-    private function createMockSupplier(string $name, Collection $products)
+    /**
+     * Create a mock supplier with given products.
+     *
+     * @param string $name
+     * @param Collection<Product> $products
+     * @return Supplier
+     */
+    private function createMockSupplier(string $name, Collection $products): Supplier
     {
         $mockSupplier = Mockery::mock(Supplier::class);
 
@@ -70,6 +109,11 @@ class PriceComparisonServiceTest extends TestCase
         return $mockSupplier;
     }
 
+    /**
+     * Create mock suppliers with products.
+     *
+     * @return array<Supplier>
+     */
     private function createMockSuppliersWithProducts(): array
     {
         // Create mock products for Supplier A
@@ -97,7 +141,12 @@ class PriceComparisonServiceTest extends TestCase
         return [$supplierA, $supplierB];
     }
 
-    public function testFindCheapestSupplierForDentalFlossAndIbuprofen()
+    /**
+     * Test that findCheapestSupplier correctly identifies the best supplier for order with different items.
+     *
+     * @return void
+     */
+    public function testFindCheapestSupplierForDentalFlossAndIbuprofen(): void
     {
         // Return suppliers from mocked repository
         $this->mockRepository->shouldReceive('getAllSuppliers')
@@ -118,7 +167,12 @@ class PriceComparisonServiceTest extends TestCase
         $this->mockRepository->shouldHaveReceived('getAllSuppliers')->once();
     }
 
-    public function testFindCheapestSupplierForIbuprofen()
+    /**
+     * Test that findCheapestSupplier correctly identifies the best supplier for order with one item.
+     *
+     * @return void
+     */
+    public function testFindCheapestSupplierForIbuprofen(): void
     {
         // Return suppliers from mocked repository
         $this->mockRepository->shouldReceive('getAllSuppliers')
